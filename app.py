@@ -58,7 +58,7 @@ app = dash.Dash(external_stylesheets=[theme], meta_tags=[
 
 # this allows me to expose the server object to gunicorn (see Procfile)
 server = app.server
-application = app
+application = server
 
 # create the html layout
 app.layout = html.Div(
