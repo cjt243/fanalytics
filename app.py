@@ -49,14 +49,15 @@ categories = ['FGM', 'FGA', 'FG_PERCENT', 'FTM', 'FTA', 'FT_PERCENT',
               'THREES', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO']
 
 
+
 # instantiate app
 app = dash.Dash(external_stylesheets=[theme], meta_tags=[
     {"name": "viewport", "content": "width=device-width, initial-scale=1"},
 ],
     title='NBA Fanalytics')
 
-application = app.server
-
+# this allows me to expose the server object to gunicorn (see Procfile)
+server = app.server
 
 # create the html layout
 app.layout = html.Div(
