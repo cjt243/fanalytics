@@ -41,8 +41,8 @@ df_weekly_averages['FG%'] = df_weekly_averages['FG%'].multiply(
 df_weekly_averages['FT%'] = df_weekly_averages['FT%'].multiply(
     100).map('{:,.2f}%'.format)
 
-# stop plotly from rendering weeks as decimal number on the x-axis
-df_scoreboard["WEEK"] = [str(w) for w in df_scoreboard["WEEK"]]
+# order the scoreboard weeks
+df_scoreboard.sort_values(by=["WEEK","TEAM_NAME"],ascending=True,inplace=True)
 
 # define categories for the drop downs
 categories = ['FGM', 'FGA', 'FG_PERCENT', 'FTM', 'FTA', 'FT_PERCENT',
@@ -51,30 +51,30 @@ categories = ['FGM', 'FGA', 'FG_PERCENT', 'FTM', 'FTA', 'FT_PERCENT',
 
 
 # instantiate app
-app = dash.Dash(external_stylesheets=[theme], meta_tags=[
+application = dash.Dash(external_stylesheets=[theme], meta_tags=[
     {"name": "viewport", "content": "width=device-width, initial-scale=1"},
 ],
     title='NBA Fanalytics')
 
 # this allows me to expose the server object to gunicorn (see Procfile)
-server = app.server
-application = server
+server = application.server
+# application = server
 
 # create the html layout
-app.layout = html.Div(
+application.layout = html.Div(
     [
         dbc.Nav(
         [
-            dbc.NavItem(dbc.NavLink("Active", active=True, href="#")),
-            dbc.NavItem(dbc.NavLink("A link", href="#")),
-            dbc.NavItem(dbc.NavLink("Another link", href="#")),
-            dbc.NavItem(dbc.NavLink("Disabled", disabled=True, href="#")),
-            dbc.DropdownMenu(
-                [dbc.DropdownMenuItem("Item 1"),
-                 dbc.DropdownMenuItem("Item 2")],
-                label="Dropdown",
-                nav=True,
-            ),
+            # dbc.NavItem(dbc.NavLink("Active", active=True, href="#")),
+            # dbc.NavItem(dbc.NavLink("A link", href="#")),
+            # dbc.NavItem(dbc.NavLink("Another link", href="#")),
+            # dbc.NavItem(dbc.NavLink("Disabled", disabled=True, href="#")),
+            # dbc.DropdownMenu(
+            #     [dbc.DropdownMenuItem("Item 1"),
+            #      dbc.DropdownMenuItem("Item 2")],
+            #     label="Dropdown",
+            #     nav=True,
+            # ),
 
         ],
         fill=True,
@@ -133,7 +133,7 @@ app.layout = html.Div(
 
 
 # callbacks for the dropdown and chart rendering
-@app.callback(
+@application.callback(
     Output("stat-over-time", "figure"),
     # Output("stat-table","figure"),
     Input("category-dropdown", "value")
@@ -151,6 +151,13 @@ def update_figure(selected_category):
         markers=True
     )
 
+    # Linear step on x-axis, no decimals
+    fig.update_layout(
+        xaxis = dict(
+            tickmode = 'linear'
+        )
+    )
+
     # fig.update_layout(
     #     plot_bgcolor=colors["background"],
     #     paper_bgcolor=colors["background"],
@@ -161,4 +168,5 @@ def update_figure(selected_category):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    # app.run_server(debug=True)
+    application.run_server(host='0.0.0.0',port=8080,debug=True)
