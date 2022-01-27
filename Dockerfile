@@ -4,4 +4,4 @@ COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 COPY . .
 EXPOSE 8080
-CMD [ "python", "./application.py"]
+CMD gunicorn --bind 0.0.0.0:8080 --workers 2 application:server
