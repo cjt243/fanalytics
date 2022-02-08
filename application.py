@@ -8,6 +8,7 @@ from pandas.io.formats import style
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import json
+from aws_functions import get_secret
 
 theme = dbc.themes.FLATLY
 
